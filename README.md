@@ -22,8 +22,8 @@ Load API key:
 set -a && source .env && set +a
 ```
 
-Start translation:
+Run translation:
 
 ```bash
-python main.py ./test_data/test00.rpy ./test_data/out00.rpy --lang chinese
+python main.py ./test_data/ ./test_out/ --lang chinese
 ```
