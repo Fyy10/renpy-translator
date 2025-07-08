@@ -1,4 +1,5 @@
 import argparse
+import os
 import re
 from pathlib import Path
 
@@ -8,7 +9,7 @@ from openai import OpenAI
 # Configuration
 # ========================
 LLM_BASE_URL = 'https://api.deepseek.com'  # Replace with your API base url
-LLM_API_KEY = 'your-api-key'  # Replace with your key
+LLM_API_KEY = os.environ['LLM_API_KEY']
 MAX_RETRIES = 3
 TIMEOUT = 120  # seconds
 
@@ -29,7 +30,7 @@ def extract_translatable_blocks(content):
 
     for i, line in enumerate(lines):
         # Match dialogue lines (e.g., `e "Hello{w=0.5}, world!"`)
-        match = re.match(r'^(\s*[a-zA-Z0-9_]*\s*)"(.*)"\s*$', line)
+        match = re.match(r'^(\s*[a-zA-Z0-9_]*\s*)"(.*)"\s*', line)
         if not match:
             continue
 
