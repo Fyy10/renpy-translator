@@ -129,14 +129,14 @@ def validate_translation(original_block, translated_line):
         )
 
 
-def process_rpy_file(input_path, output_path, target_lang):
+def process_rpy_file(in_path, out_path, target_lang):
     """
     Main pipeline: Read -> Extract -> Translate -> Validate -> Write.
     """
-    print(f'Processing {input_path} -> {output_path} ({target_lang})')
+    print(f'Processing {in_path} -> {out_path} ({target_lang})')
 
     # Read input file
-    with open(input_path, 'r', encoding='utf-8') as f:
+    with open(in_path, 'r', encoding='utf-8') as f:
         content = f.read()
 
     # Extract translatable blocks
@@ -163,7 +163,7 @@ def process_rpy_file(input_path, output_path, target_lang):
         output_lines[block['line_number'] - 1] = '    ' + translated_line
 
     # Write output
-    with open(output_path, 'w', encoding='utf-8') as f:
+    with open(out_path, 'w', encoding='utf-8') as f:
         f.write('\n'.join(output_lines))
 
     print(f'Successfully translated {len(blocks)} lines.')
@@ -174,22 +174,25 @@ def process_rpy_file(input_path, output_path, target_lang):
 # ========================
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
-        description="Automatically translate Ren'Py (.rpy) files using an LLM API."
+        description="Automatically translate Ren'Py (.rpy) scripts using an LLM API."
     )
-    parser.add_argument('input_file', help='Path to the input .rpy file')
-    parser.add_argument('output_file', help='Path to the output translated .rpy file')
+    parser.add_argument('input_folder', help='Path to the input folder that contains the .rpy files to be translated.')
+    parser.add_argument('output_folder', help='Path to the output folder for the translated .rpy files.')
     parser.add_argument(
         '--lang', required=True, help='Target language (e.g., "chinese")'
     )
     args = parser.parse_args()
 
     # Verify paths
-    input_path = Path(args.input_file)
+    input_path = Path(args.input_folder)
     if not input_path.exists():
-        raise FileNotFoundError(f'Input file not found: {input_path}')
+        raise FileNotFoundError(f'Input folder not found: {input_path}')
 
-    output_path = Path(args.output_file)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path = Path(args.output_folder)
+    output_path.mkdir(parents=True, exist_ok=True)
 
-    # Run translation
-    process_rpy_file(input_path, output_path, args.lang)
+    for in_file_path in input_path.glob('**/*.rpy'):
+        out_file_path = output_path.joinpath(in_file_path.name)
+
+        # run translation
+        process_rpy_file(in_file_path, out_file_path, args.lang)
