@@ -39,7 +39,7 @@ def extract_translatable_blocks(content):
         if speaker == 'old':
             continue
         text = match.group(2)
-        tags = re.findall(r'\{.*?\}', text)
+        tags = re.findall(r'\{.*?\}|\[.*?\]', text)
         # s "What is a visual novel?" nointeract
         stmt_args = re.findall(r'^\s*[a-zA-Z0-9_]*\s*"(?:\\.|[^"\\])*"\s*(\S+(?:\s+\S+)*)', line)
 
@@ -71,7 +71,7 @@ Example Output: "得分: %s 分"
 
     instructions = f'''
 Translate these Ren'Py game dialogues to {target_lang}. Follow these rules:
-1. Preserve ALL tags ({{...}}), speaker labels, and formatting EXACTLY.
+1. Preserve ALL tags ({{...}}, [...], etc.), speaker labels, and formatting EXACTLY.
 2. Keep placeholders like %s unchanged.
 3. Never add/remove quotes or line breaks.
 
@@ -125,7 +125,7 @@ def validate_translation(original_block, translated_line):
 
     # Check tags
     orig_tags = original_block['tags']
-    trans_tags = re.findall(r'\{.*?\}', translated_line)
+    trans_tags = re.findall(r'\{.*?\}|\[.*?\]', translated_line)
     if set(orig_tags) != set(trans_tags):
         raise ValueError(
             f'Tag mismatch:\nOriginal: {orig_tags}\nTranslated: {trans_tags}'
