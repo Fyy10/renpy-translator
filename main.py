@@ -40,6 +40,8 @@ def extract_translatable_blocks(content):
             continue
         text = match.group(2)
         tags = re.findall(r'\{.*?\}', text)
+        # s "What is a visual novel?" nointeract
+        stmt_args = re.findall(r'^\s*[a-zA-Z0-9_]*\s*"(?:\\.|[^"\\])*"\s*(\S+(?:\s+\S+)*)', line)
 
         blocks.append(
             {
@@ -47,6 +49,7 @@ def extract_translatable_blocks(content):
                 'speaker': speaker,
                 'text': text,
                 'tags': tags,
+                'stmt_args': stmt_args,
                 'line_number': i + 1,
             }
         )
@@ -160,7 +163,7 @@ def process_rpy_file(in_path, out_path, target_lang):
     output_lines = content.split('\n')
     for block, translated_line in zip(blocks, translated_lines):
         validate_translation(block, translated_line)
-        output_lines[block['line_number'] - 1] = '    ' + translated_line
+        output_lines[block['line_number'] - 1] = '    ' + ' '.join([translated_line, *block['stmt_args']])
 
     # Write output
     with open(out_path, 'w', encoding='utf-8') as f:

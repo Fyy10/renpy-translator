@@ -10,5 +10,5 @@ translate zh_cn start_a170b500:
 translate zh_cn start_f41f55d7:
 
     # e "Once you add a story, pictures, and music, you can release it to the world!"
-    e "一旦你添加了故事、图片和音乐，就可以向全世界发布它了！"
+    e "一旦你添加了故事、图片和音乐，就可以向全世界发布它！"
 
