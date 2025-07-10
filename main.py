@@ -121,15 +121,17 @@ def validate_translation(original_block, translated_line):
         re.match(r'^(\s*[a-zA-Z0-9_]*\s*)', translated_line).group(1).strip()
     )
     if orig_speaker != trans_speaker:
-        raise ValueError(f'Speaker mismatch: {orig_speaker} vs {trans_speaker}')
+        print(f'Speaker mismatch: {orig_speaker} vs {trans_speaker}')
+        return False
 
     # Check tags
     orig_tags = original_block['tags']
     trans_tags = re.findall(r'\{.*?\}|\[.*?\]', translated_line)
     if set(orig_tags) != set(trans_tags):
-        raise ValueError(
-            f'Tag mismatch:\nOriginal: {orig_tags}\nTranslated: {trans_tags}'
-        )
+        print(f'Tag mismatch:\nOriginal: {orig_tags}\nTranslated: {trans_tags}')
+        return False
+
+    return True
 
 
 def process_rpy_file(in_path, out_path, target_lang):
@@ -161,9 +163,14 @@ def process_rpy_file(in_path, out_path, target_lang):
 
     # Reintegrate translations
     output_lines = content.split('\n')
+    err_cnt = 0
     for block, translated_line in zip(blocks, translated_lines):
-        validate_translation(block, translated_line)
+        if not validate_translation(block, translated_line):
+            err_cnt += 1
+            print(f'Validation failed for block: {block}\nTranslated line: {translated_line}')
         output_lines[block['line_number'] - 1] = '    ' + ' '.join([translated_line, *block['stmt_args']])
+    if err_cnt:
+        print(f'{err_cnt} errors encountered.')
 
     # Write output
     with open(out_path, 'w', encoding='utf-8') as f:
