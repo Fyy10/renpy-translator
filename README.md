@@ -28,6 +28,15 @@ Run translation:
 python main.py ./test_data/ ./test_out/ --lang chinese
 ```
 
+To skip the translated `.rpy` files (files that do not need to translate), create a `.rpyignore` file in the source
+folder:
+
+```gitignore
+file1.rpy
+file2.rpy
+# file3.rpy
+```
+
 ## Step-by-step Guide for Translating Renpy Games
 
 Enable language selection in the `Preferences` tab.

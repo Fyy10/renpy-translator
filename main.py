@@ -205,7 +205,23 @@ if __name__ == '__main__':
     output_path = Path(args.output_folder)
     output_path.mkdir(parents=True, exist_ok=True)
 
+    # read .rpyignore
+    ignore_set = set()
+    ignore_file = input_path.joinpath('.rpyignore')
+    if ignore_file.exists():
+        try:
+            with open(ignore_file, 'r', encoding='utf-8') as f:
+                ignore_set = set(
+                    line.strip()
+                    for line in f
+                    if line.strip() and not line.startswith('#')
+                )
+        except UnicodeDecodeError:
+            print(f"Warning: ignore file {ignore_file} is not a Unicode file, skipping.")
+
     for in_file_path in input_path.glob('**/*.rpy'):
+        if in_file_path.name in ignore_set:
+            continue
         out_file_path = output_path.joinpath(in_file_path.name)
 
         # run translation
