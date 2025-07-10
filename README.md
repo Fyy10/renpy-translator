@@ -103,3 +103,10 @@ translate zh_cn strings:
     old "Renpy Example"
     new "Renpy 示例"
 ```
+
+Alternatively, create a `game/tl/zh_cn/style.rpy` file:
+
+```renpy
+translate zh_cn python:
+    gui.system_font = gui.main_font = gui.text_font = gui.name_text_font = gui.interface_text_font = gui.button_text_font = gui.choice_button_text_font = "SourceHanSansLite.ttf"
+```
