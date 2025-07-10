@@ -62,18 +62,19 @@ def generate_llm_prompt(blocks, target_lang):
     Formats blocks into an LLM prompt with strict instructions.
     """
     examples = '''
-Example Input:  e "Hello{w=0.5}, world!{fast}"
-Example Output: e "你好{w=0.5}, 世界!{fast}"
+Example Input:  <1> e "Hello{w=0.5}, world!{fast}"
+Example Output: <1> e "你好{w=0.5}, 世界!{fast}"
 
-Example Input: "Score: %s points"
-Example Output: "得分: %s 分"
+Example Input:  <112> "Score: %s points"
+Example Output: <112> "得分: %s 分"
     '''.strip()
 
     instructions = f'''
 Translate these Ren'Py game dialogues to {target_lang}. Follow these rules:
 1. Preserve ALL tags ({{...}}, [...], etc.), speaker labels, and formatting EXACTLY.
-2. Keep placeholders like %s unchanged.
-3. Never add/remove quotes or line breaks.
+2. Preserve ALL line numbers at the beginning EXACTLY, and translate line by line.
+3. Keep placeholders like %s unchanged.
+4. Never add/remove quotes or line breaks.
 
 {examples}
 
@@ -81,7 +82,7 @@ Now translate these:
     '''.strip()
 
     text_to_translate = '\n'.join(
-        f'{block['speaker']} "{block['text']}"' for block in blocks
+        f'<{block['line_number']}> {block['speaker']} "{block['text']}"' for block in blocks
     )
 
     return f'{instructions}\n{text_to_translate}'
@@ -94,7 +95,7 @@ def call_llm_api(prompt):
     """
     try:
         response = client.chat.completions.create(
-            model='deepseek-reasoner',
+            model='deepseek-chat',
             messages=[
                 {'role': 'system', 'content': 'You are a professional game translator.'},
                 {'role': 'user', 'content': prompt},
@@ -115,13 +116,20 @@ def validate_translation(original_block, translated_line):
     """
     Checks if tags/speakers are preserved.
     """
+    # Check line number
+    orig_ln = original_block['line_number']
+    trans_ln = int(re.findall(r'^<(\d+)>', translated_line)[0])
+    if orig_ln != trans_ln:
+        print(f'Line number mismatch: Original {orig_ln} vs Translated {trans_ln}')
+        return False
+
     # Check speaker
     orig_speaker = original_block['speaker']
     trans_speaker = (
-        re.match(r'^(\s*[a-zA-Z0-9_]*\s*)', translated_line).group(1).strip()
+        re.match(r'^<\d+>(\s*[a-zA-Z0-9_]*\s*)', translated_line).group(1).strip()
     )
     if orig_speaker != trans_speaker:
-        print(f'Speaker mismatch: {orig_speaker} vs {trans_speaker}')
+        print(f'Speaker mismatch: Original {orig_speaker} vs Translated {trans_speaker}')
         return False
 
     # Check tags
@@ -172,6 +180,8 @@ def process_rpy_file(in_path, out_path, target_lang):
         if not validate_translation(block, translated_line):
             err_cnt += 1
             print(f'Validation failed for block: {block}\nTranslated line: {translated_line}')
+        # remove line number from translted line
+        translated_line = re.sub(r'^<\d+>\s*', '', translated_line)
         output_lines[block['line_number'] - 1] = '    ' + ' '.join([translated_line, *block['stmt_args']])
     if err_cnt:
         print(f'{err_cnt} errors encountered.')
