@@ -161,6 +161,10 @@ def process_rpy_file(in_path, out_path, target_lang):
         if line.strip() and '"' in line
     ]
 
+    # check if all blocks are translated
+    if len(blocks) != len(translated_lines):
+        print(f'Warning: {len(translated_lines)} lines translated, but there are {len(blocks)} translate blocks.')
+
     # Reintegrate translations
     output_lines = content.split('\n')
     err_cnt = 0
