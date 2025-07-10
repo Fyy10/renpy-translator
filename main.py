@@ -236,3 +236,9 @@ if __name__ == '__main__':
 
         # run translation
         process_rpy_file(in_file_path, out_file_path, args.lang)
+
+        ignore_set.add(in_file_path.name)
+
+    # write to .rpyignore
+    with open(ignore_file, 'w', encoding='utf-8') as f:
+        f.write('\n'.join(sorted(ignore_set)))
