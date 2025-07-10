@@ -94,7 +94,7 @@ def call_llm_api(prompt):
     """
     try:
         response = client.chat.completions.create(
-            model='deepseek-chat',
+            model='deepseek-reasoner',
             messages=[
                 {'role': 'system', 'content': 'You are a professional game translator.'},
                 {'role': 'user', 'content': prompt},
