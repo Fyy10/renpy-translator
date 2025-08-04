@@ -62,19 +62,40 @@ def generate_llm_prompt(blocks, target_lang):
     Formats blocks into an LLM prompt with strict instructions.
     """
     examples = '''
-Example Input:  <1> e "Hello{w=0.5}, world!{fast}"
-Example Output: <1> e "你好{w=0.5}, 世界!{fast}"
+Example Input:
 
-Example Input:  <112> "Score: %s points"
-Example Output: <112> "得分: %s 分"
+<1> e "Hello{w=0.5}, world!{fast}"
+<3> s "What is a visual novel?"
+<15> ai "Let's make a game, {w} a very good one, with [c]!"
+<99> f "{i}{alpha=.6}\"What's going on...?{w} Why is she crying now...?!\"{/alpha}{i}"
+<112> "Score: %s points"
+<156> "I am the narrator, and I will guide you through this game."
+<177> g "My first name is [player.names[0]]."
+<203> g "You achieved [100.0 * points / max_points:.2] scores!"
+<205> so "Hello, Natsuki! My name is Sora."
+<208> n "You are very happy to see Sora, as you have been waiting for her for a long time."
+
+Example Output:
+
+<1> e "你好{w=0.5}, 世界!{fast}"
+<3> s "什么是视觉小说？"
+<15> ai "让我们制作一个游戏，{w} 一个非常好的游戏，和[c]一起！"
+<99> f "{i}{alpha=.6}\"发生了什么事...?{w} 她为什么现在在哭...？！\"{/alpha}{i}"
+<112> "得分: %s 分"
+<156> "我是旁白，我将引导你完成这个游戏。"
+<177> g "我的名字是 [player.names[0]]。"
+<203> g "你获得了 [100.0 * points / max_points:.2] 分！"
+<205> so "你好，Natsuki！我叫Sora。"
+<208> n "你非常高兴见到Sora，因为你已经等她很久了。"
     '''.strip()
 
     instructions = f'''
 Translate these Ren'Py game dialogues to {target_lang}. Follow these rules:
 1. Preserve ALL tags ({{...}}, [...], etc.), speaker labels, and formatting EXACTLY.
 2. Preserve ALL line numbers at the beginning EXACTLY, and translate line by line.
-3. Keep placeholders like %s unchanged.
-4. Never add/remove quotes or line breaks.
+3. Preserve ALL character names.
+4. Keep placeholders like %s unchanged.
+5. Never add/remove quotes or line breaks.
 
 {examples}
 
