@@ -82,7 +82,7 @@ Now translate these:
     '''.strip()
 
     text_to_translate = '\n'.join(
-        f'<{block['line_number']}> {block['speaker']} "{block['text']}"' for block in blocks
+        f"<{block['line_number']}> {block['speaker']} \"{block['text']}\"" for block in blocks
     )
 
     return f'{instructions}\n{text_to_translate}'
