@@ -3,13 +3,17 @@ import os
 import re
 from pathlib import Path
 
+from dotenv import load_dotenv
 from openai import OpenAI
+
+load_dotenv()
 
 # ========================
 # Configuration
 # ========================
-LLM_BASE_URL = 'https://api.deepseek.com'  # Replace with your API base url
+LLM_BASE_URL = os.environ['LLM_BASE_URL']
 LLM_API_KEY = os.environ['LLM_API_KEY']
+LLM_MODEL = os.environ['LLM_MODEL']
 MAX_RETRIES = 3
 TIMEOUT = 300  # seconds
 
@@ -116,7 +120,7 @@ def call_llm_api(prompt):
     """
     try:
         response = client.chat.completions.create(
-            model='deepseek-chat',
+            model=LLM_MODEL,
             messages=[
                 {'role': 'system', 'content': 'You are a professional game translator.'},
                 {'role': 'user', 'content': prompt},
