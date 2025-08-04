@@ -114,11 +114,16 @@ def call_llm_api(prompt):
 
 def validate_translation(original_block, translated_line):
     """
-    Checks if tags/speakers are preserved.
+    Checks if tags, speakers, etc. are preserved.
     """
     # Check line number
     orig_ln = original_block['line_number']
-    trans_ln = int(re.findall(r'^<(\d+)>', translated_line)[0])
+    try:
+        trans_ln = int(re.findall(r'^<(\d+)>', translated_line)[0])
+    except IndexError:
+        print(f'Line number not found in translated line: {translated_line}')
+        return False
+
     if orig_ln != trans_ln:
         print(f'Line number mismatch: Original {orig_ln} vs Translated {trans_ln}')
         return False
