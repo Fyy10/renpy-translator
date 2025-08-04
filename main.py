@@ -11,7 +11,7 @@ from openai import OpenAI
 LLM_BASE_URL = 'https://api.deepseek.com'  # Replace with your API base url
 LLM_API_KEY = os.environ['LLM_API_KEY']
 MAX_RETRIES = 3
-TIMEOUT = 120  # seconds
+TIMEOUT = 300  # seconds
 
 # LLM client
 client = OpenAI(api_key=LLM_API_KEY, base_url=LLM_BASE_URL, max_retries=MAX_RETRIES, timeout=TIMEOUT)
