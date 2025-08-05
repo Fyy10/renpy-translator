@@ -97,7 +97,7 @@ Example Output:
 Translate these Ren'Py game dialogues to {target_lang}. Follow these rules:
 1. Preserve ALL tags ({{...}}, [...], etc.), speaker labels, and formatting EXACTLY.
 2. Preserve ALL line numbers at the beginning EXACTLY, and translate line by line.
-3. Preserve ALL character names.
+3. Preserve ALL character names in the ORIGINAL language.
 4. Keep placeholders like %s unchanged.
 5. Never add/remove quotes or line breaks.
 
