@@ -4,22 +4,26 @@ Translate your Renpy game with LLM.
 
 ## Usage
 
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Create a `.env` file based on `.env.example` and fill the info as needed:
+
+```bash
+LLM_BASE_URL=your-openai-base-url
+LLM_API_KEY=your-openai-api-key
+LLM_MODEL=your-model-name
+```
+
+The API needs to be compatible with OpenAI API.
+
 Show help message:
 
 ```bash
 python main.py -h
-```
-
-Create a `.env` file with the following content:
-
-```bash
-LLM_API_KEY=your-api-key
-```
-
-Load API key (you may need to modify `LLM_BASE_URL` in `main.py` as well):
-
-```bash
-set -a && source .env && set +a
 ```
 
 Run translation:
@@ -28,7 +32,8 @@ Run translation:
 python main.py ./test_data/ ./test_out/ --lang chinese
 ```
 
-To skip the translated `.rpy` files (files that do not need to translate), create a `.rpyignore` file in the source
+To skip the translated `.rpy` files (files that do not need to translate), create a `.rpyignore` file in the `.rpy`
+source
 folder:
 
 ```gitignore
