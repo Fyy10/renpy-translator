@@ -12,7 +12,7 @@ pip install -r requirements.txt
 
 Create a `.env` file based on `.env.example` and fill the info as needed:
 
-```bash
+```dotenv
 LLM_BASE_URL=your-openai-base-url
 LLM_API_KEY=your-openai-api-key
 LLM_MODEL=your-model-name
@@ -32,13 +32,15 @@ Run translation:
 python main.py ./test_data/ ./test_out/ --lang chinese
 ```
 
+The translator will recursively translate all the `.rpy` files in the source folder and write to the target folder,
+preserving folder structures.
 To skip the translated `.rpy` files (files that do not need to translate), create a `.rpyignore` file in the `.rpy`
-source
-folder:
+source folder:
 
 ```gitignore
 file1.rpy
 file2.rpy
+folder1/file1.rpy
 # file3.rpy
 ```
 
