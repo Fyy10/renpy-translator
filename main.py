@@ -260,15 +260,20 @@ if __name__ == '__main__':
             print(f"Warning: ignore file {ignore_file} is not a Unicode file, skipping.")
 
     for in_file_path in input_path.glob('**/*.rpy'):
-        if in_file_path.name in ignore_set:
+        # get relative path
+        rel_path = in_file_path.relative_to(input_path)
+
+        if str(rel_path) in ignore_set:
             continue
-        out_file_path = output_path.joinpath(in_file_path.name)
+
+        out_file_path = output_path / rel_path
+        out_file_path.parent.mkdir(parents=True, exist_ok=True)
 
         # run translation
         process_rpy_file(in_file_path, out_file_path, args.lang)
 
-        ignore_set.add(in_file_path.name)
+        ignore_set.add(str(rel_path))
 
-    # write to .rpyignore
-    with open(ignore_file, 'w', encoding='utf-8') as f:
-        f.write('\n'.join(sorted(ignore_set)))
+        # update .rpyignore
+        with open(ignore_file, 'w', encoding='utf-8') as f:
+            f.write('\n'.join(sorted(ignore_set)))
